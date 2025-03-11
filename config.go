@@ -46,6 +46,12 @@ type DeviceConfig struct {
 	ASecConfig         *ASecConfigType
 }
 
+type UDPProxyTunnelConfig struct {
+	BindAddress       string
+	Target            string
+	InactivityTimeout int
+}
+
 type TCPClientTunnelConfig struct {
 	BindAddress *net.TCPAddr
 	Target      string
@@ -75,6 +81,35 @@ type HTTPConfig struct {
 type Configuration struct {
 	Device   *DeviceConfig
 	Routines []RoutineSpawner
+}
+
+
+func parseUDPProxyTunnelConfig(section *ini.Section) (RoutineSpawner, error) {
+	config := &UDPProxyTunnelConfig{}
+
+	bindAddress, err := parseString(section, "BindAddress")
+	if err != nil {
+		return nil, err
+	}
+	config.BindAddress = bindAddress
+
+	target, err := parseString(section, "Target")
+	if err != nil {
+		return nil, err
+	}
+	config.Target = target
+
+	inactivityTimeout := 0
+	if sectionKey, err := section.GetKey("InactivityTimeout"); err == nil {
+		timeoutVal, err := sectionKey.Int()
+		if err != nil {
+			return nil, err
+		}
+		inactivityTimeout = timeoutVal
+	}
+	config.InactivityTimeout = inactivityTimeout
+
+	return config, nil
 }
 
 func parseString(section *ini.Section, keyName string) (string, error) {
@@ -683,7 +718,10 @@ func ParseConfig(path string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	err = parseRoutinesConfig(&routinesSpawners, cfg, "UDPProxyTunnel", parseUDPProxyTunnelConfig)
+	if err != nil {
+		return nil, err
+	}
 	return &Configuration{
 		Device:   device,
 		Routines: routinesSpawners,
