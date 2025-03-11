@@ -1,23 +1,30 @@
 #  wireproxy-awg-udp
 
 Wireproxy-AmneziaWG with simple UDP tunnel support
+
 Allows to tunnel DNS over WG, WG over WG, ...
+
 This app source: https://github.com/ValentineShilov/wireproxy-awg-udp
+
 Udp support based on this commit: (https://github.com/whyvl/wireproxy/pull/154/commits/8ae43d61032f6e6cbfe0fc025269849b59439e13)
+
 Wiregproxy-awg source: https://github.com/artem-russkikh/wireproxy-awg
+
 Original Wireproxy source: https://github.com/whyvl/wireproxy/
 
 Configuration:
+
 Same as Wireproxy-awg.
 
 # To create a udp tunnel, add similar lines to the configuration:
+```
 #Sample UDP tunnel
 [UDPProxyTunnel]
 BindAddress = 127.0.0.1:53
 Target = 1.1.1.1:53
 #Inactivity timeout, 0 for never timeout
 InactivityTimeout = 30
-
+```
 
 [![ISC licensed](https://img.shields.io/badge/license-ISC-blue)](./LICENSE)
 [![Build status](https://github.com/octeep/wireproxy/actions/workflows/build.yml/badge.svg)](https://github.com/octeep/wireproxy/actions)
